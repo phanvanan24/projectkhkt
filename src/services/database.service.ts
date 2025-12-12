@@ -1,14 +1,14 @@
 
 import { Injectable, signal } from '@angular/core';
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  getDocs, 
-  deleteDoc, 
-  doc, 
-  query, 
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  query,
   orderBy,
   Timestamp,
   setDoc,
@@ -20,13 +20,14 @@ import {
 } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA48GcL6K3bt0ywuD8LU3XdE9LKXOTqitg",
-  authDomain: "thithu-c66eb.firebaseapp.com",
-  projectId: "thithu-c66eb",
-  storageBucket: "thithu-c66eb.firebasestorage.app",
-  messagingSenderId: "11672956754",
-  appId: "1:11672956754:web:01842953bd9e549f0fd48b",
-  measurementId: "G-XC9G6JPNEE"
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
+  measurementId: ""
+  // Điền API key của firebase vào đây để sử dụng //
 };
 
 export interface ExamRecord {
@@ -70,22 +71,22 @@ export interface ChatHistoryMsg {
   providedIn: 'root'
 })
 export class DatabaseService {
-  private app = getApps().some(app => app.name === 'MockExamApp') 
-    ? getApp('MockExamApp') 
+  private app = getApps().some(app => app.name === 'MockExamApp')
+    ? getApp('MockExamApp')
     : initializeApp(firebaseConfig, 'MockExamApp');
 
   private db = getFirestore(this.app);
-  
+
   private EXAMS_COL = 'exams';
   private HISTORY_COL = 'exam_history';
   private STATS_DOC = 'stats/system_v2';
   private CHAT_HISTORY_COL = 'chat_histories';
-  
-  private CONFIG_GLOBAL_DOC = 'system_config/global'; 
-  private CONFIG_PROMPTS_DOC = 'system_config/prompts'; 
+
+  private CONFIG_GLOBAL_DOC = 'system_config/global';
+  private CONFIG_PROMPTS_DOC = 'system_config/prompts';
   private EXAMPLES_COL = 'exam_examples';
 
-  constructor() {}
+  constructor() { }
 
 
   async getSystemConfig() {
@@ -113,7 +114,7 @@ export class DatabaseService {
     }
   }
 
-  
+
   async getPromptsConfig() {
     try {
       const docRef = doc(this.db, this.CONFIG_PROMPTS_DOC);
@@ -138,7 +139,7 @@ export class DatabaseService {
     }
   }
 
-  
+
   async getExampleData(subject: string, category: string, level: string, lesson?: string): Promise<string | null> {
     try {
       let docId = `${subject}_${category}`;
@@ -169,7 +170,7 @@ export class DatabaseService {
       docId = docId.toLowerCase();
 
       const docRef = doc(this.db, this.EXAMPLES_COL, docId);
-      await setDoc(docRef, { 
+      await setDoc(docRef, {
         subject,
         category,
         lesson: lesson || 'all',
@@ -222,7 +223,7 @@ export class DatabaseService {
           studentsRegistered: 41
         });
       }
-      
+
       await updateDoc(docRef, {
         [field]: increment(1)
       });
@@ -250,11 +251,11 @@ export class DatabaseService {
         const CHUNK_SIZE = 500 * 1024;
         const totalChunks = Math.ceil(pdfData.length / CHUNK_SIZE);
         const partsCol = collection(this.db, this.EXAMS_COL, docRef.id, 'pdf_parts');
-        
+
         const promises = [];
         for (let i = 0; i < totalChunks; i++) {
           const chunk = pdfData.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
-          const partDoc = doc(partsCol, i.toString()); 
+          const partDoc = doc(partsCol, i.toString());
           promises.push(setDoc(partDoc, { data: chunk, index: i }));
         }
         await Promise.all(promises);
@@ -272,7 +273,7 @@ export class DatabaseService {
       const colRef = collection(this.db, this.EXAMS_COL);
       const q = query(colRef, orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
-      
+
       return snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
@@ -287,12 +288,12 @@ export class DatabaseService {
     try {
       const partsCol = collection(this.db, this.EXAMS_COL, examId, 'pdf_parts');
       const snapshot = await getDocs(partsCol);
-      
+
       if (snapshot.empty) return null;
 
       const parts = snapshot.docs.map(doc => doc.data() as { data: string, index: number });
       parts.sort((a, b) => a.index - b.index);
-      
+
       return parts.map(p => p.data).join('');
     } catch (error) {
       console.error("Error fetching PDF chunks:", error);
@@ -316,17 +317,17 @@ export class DatabaseService {
       const colRef = collection(this.db, this.HISTORY_COL);
       const q = query(colRef, where('userId', '==', userId));
       const snapshot = await getDocs(q);
-      
+
       const historyDocs = snapshot.docs.sort((a, b) => {
-         const tA = a.data()['createdAt']?.seconds || 0;
-         const tB = b.data()['createdAt']?.seconds || 0;
-         return tA - tB;
+        const tA = a.data()['createdAt']?.seconds || 0;
+        const tB = b.data()['createdAt']?.seconds || 0;
+        return tA - tB;
       });
-      
+
       if (historyDocs.length >= 5) {
-        const deleteCount = historyDocs.length - 4; 
+        const deleteCount = historyDocs.length - 4;
         for (let i = 0; i < deleteCount; i++) {
-           await deleteDoc(historyDocs[i].ref);
+          await deleteDoc(historyDocs[i].ref);
         }
       }
 
@@ -349,19 +350,19 @@ export class DatabaseService {
       const colRef = collection(this.db, this.HISTORY_COL);
       const q = query(colRef, where('userId', '==', userId));
       const snapshot = await getDocs(q);
-      
+
       const sortedDocs = snapshot.docs.sort((a, b) => {
-         const tA = a.data()['createdAt']?.seconds || 0;
-         const tB = b.data()['createdAt']?.seconds || 0;
-         return tB - tA;
+        const tA = a.data()['createdAt']?.seconds || 0;
+        const tB = b.data()['createdAt']?.seconds || 0;
+        return tB - tA;
       });
-      
+
       return sortedDocs.map(doc => {
         const data = doc.data();
         let parsedData = null;
         try {
-           parsedData = JSON.parse(data['examData']);
-        } catch(e) { parsedData = {}; }
+          parsedData = JSON.parse(data['examData']);
+        } catch (e) { parsedData = {}; }
 
         return {
           id: doc.id,
@@ -396,7 +397,7 @@ export class DatabaseService {
   async saveTeacherChatHistory(userId: string, messages: ChatHistoryMsg[]) {
     try {
       const docRef = doc(this.db, this.CHAT_HISTORY_COL, userId);
-      
+
       await setDoc(docRef, {
         messages: messages,
         updatedAt: Timestamp.now()
