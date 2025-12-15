@@ -156,7 +156,7 @@ Lúc này website của bạn đang chạy ở môi trường phát triển, đ�
 1. Tạo tài khoản hosting
 2. Cấu hình domain
 3. Deploy website
-Lưu ý: Khi triển khai dự án lên hosting, API của Firebase có thể không hoạt động do giới hạn cấu hình. Vì vậy, cần cấu hình lại Firebase API Key bằng cách khai báo trong file .env của dự án, sau đó triển khai ứng dụng trên VPS để đảm bảo hệ thống vận hành ổn định và an toàn.
+> **Lưu ý:** Khi triển khai dự án lên hosting, API của Firebase có thể không hoạt động do giới hạn cấu hình. Vì vậy, cần cấu hình lại Firebase API Key bằng cách khai báo trong file .env của dự án, sau đó triển khai ứng dụng trên VPS để đảm bảo hệ thống vận hành ổn định và an toàn.
 
 ---
 
