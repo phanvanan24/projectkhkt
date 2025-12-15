@@ -83,10 +83,8 @@ npm install
 Nếu gặp lỗi xung đột thư viện, sử dụng các lệnh sau:
 
 ```bash
-# Cài đặt với legacy peer deps
 npm install --legacy-peer-deps
 
-# Cài đặt Firebase với legacy mode
 npm install firebase --legacy-peer-deps
 ```
 
@@ -144,10 +142,10 @@ Admin có toàn quyền quản lý hệ thống, bao gồm:
 
 Sau khi hoàn thành toàn bộ các bước trên:
 
-- ✔️ Hệ thống sẵn sàng hoạt động
-- ✔️ Database và các chức năng AI được kết nối đầy đủ
-- ✔️ Tài khoản Admin có toàn quyền quản lý hệ thống
-- ✔️ Có thể tiếp tục mở rộng hoặc triển khai trên môi trường **production**
+-  Hệ thống sẵn sàng hoạt động
+-  Database và các chức năng AI được kết nối đầy đủ
+-  Tài khoản Admin có toàn quyền quản lý hệ thống
+-  Có thể tiếp tục mở rộng hoặc triển khai trên môi trường **production**
 
 ---
 
